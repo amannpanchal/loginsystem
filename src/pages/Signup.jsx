@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { signup } from "../functions";
 
 const backendLink = "http://localhost:4000";
 
@@ -26,7 +27,7 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post(`${backendLink}/signup`, form);
+      const res = await signup( form);
       setMessage(res.data.message || "Signup successful! Check your email for verification link.");
     } catch (e) {
       const errMsg = e?.response?.data?.message || "Signup failed";
