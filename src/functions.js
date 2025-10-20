@@ -1,4 +1,4 @@
-const backendLink ='https://backendfor.onrender.com'
+const backendLink ='http://localhost:4000'
 import axios from 'axios'
 
 async function login ({password,email}) {
@@ -7,10 +7,8 @@ async function login ({password,email}) {
     })
     return response;
 }
-async function signup ({password,email,name}) {
-    const response = await axios.post(`${backendLink}/signup`,{
-        email,password,name
-    })
+async function signup (form) {
+    const response = await axios.post(`${backendLink}/signup`,form)
     return response;
 }
 
@@ -25,5 +23,16 @@ async function dashboard (token) {
     return response;
 }
 
+async function verifyToken ({
+    token,password
+}) {
 
-export  {login,signup,dashboard}
+    const res = await axios.post(`${backendLink}/set-password`,{
+    token,password
+    });
+    return res;
+
+}
+
+
+export  {login,signup,dashboard ,verifyToken};

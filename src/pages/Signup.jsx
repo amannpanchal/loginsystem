@@ -1,10 +1,18 @@
 import React, { useState } from "react";
-import { signup } from "../functions";
+import axios from "axios";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+
+const backendLink = "http://localhost:4000";
 
 const Signup = () => {
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+  });
   const [message, setMessage] = useState(null);
-  const [verifyLink, setVerifyLink] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -15,13 +23,11 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(null);
-    setVerifyLink(null);
     setLoading(true);
 
     try {
-      const res = await signup(form);
-      setMessage(res.data.message || "Signup success. Check verification link below.");
-      if (res.data.verifyLink) setVerifyLink(res.data.verifyLink);
+      const res = await axios.post(`${backendLink}/signup`, form);
+      setMessage(res.data.message || "Signup successful! Check your email for verification link.");
     } catch (e) {
       const errMsg = e?.response?.data?.message || "Signup failed";
       setMessage(errMsg);
@@ -31,14 +37,22 @@ const Signup = () => {
   };
 
   return (
-    <div className="form-container">
+    <div className="form-container" style={{ maxWidth: "400px", margin: "50px auto" }}>
       <h2>Signup</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         <input
           type="text"
-          name="name"
-          placeholder="Name"
-          value={form.name}
+          name="firstName"
+          placeholder="First Name"
+          value={form.firstName}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="text"
+          name="lastName"
+          placeholder="Last Name"
+          value={form.lastName}
           onChange={handleChange}
           required
         />
@@ -50,26 +64,40 @@ const Signup = () => {
           onChange={handleChange}
           required
         />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
+
+        {/* Country select with phone input */}
+        <PhoneInput
+          country={"in"} // default country India 🇮🇳
+          value={form.phoneNumber}
+          onChange={(phone) => setForm((prev) => ({ ...prev, phoneNumber: `+${phone}` }))}
+          inputStyle={{
+            width: "100%",
+            height: "40px",
+            fontSize: "16px",
+          }}
           required
         />
-        <button type="submit" disabled={loading}>
+
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            padding: "10px",
+     
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
           {loading ? "Signing up..." : "Signup"}
         </button>
       </form>
 
       {message && (
-        <p className={`message ${verifyLink ? "success" : ""}`}>{message}</p>
-      )}
-      {verifyLink && (
-        <a className="verify-link" href={verifyLink}>
-          Verify your email
-        </a>
+        <p style={{ marginTop: "15px", color: message.includes("successful") ? "green" : "red" }}>
+          {message}
+        </p>
       )}
     </div>
   );
