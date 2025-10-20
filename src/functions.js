@@ -2,6 +2,12 @@ const backendLink ='https://backendfor.onrender.com'
 import axios from 'axios'
 
 
+
+
+
+
+
+
 async function login ({password,email}) {
     const response = await axios.post(`${backendLink}/login`,{
         email,password
