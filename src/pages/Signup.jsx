@@ -95,7 +95,9 @@ const Signup = () => {
       </form>
 
       {message && (
-        <p style={{ marginTop: "15px", color: message.includes("successful") ? "green" : "red" }}>
+        <p 
+        style={{ marginTop: "15px", color: message.includes("successful") ? "green" : "red" }}>
+
           {message}
         </p>
       )}
